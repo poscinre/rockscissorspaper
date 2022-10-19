@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang = "ko">
+<head>
+	<meta charset="UTF-8">
+	<title>가위 바위 보!</title>
+	<style>
+		@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+		* { 
+		font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 
+		'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+		}
+
+		#wrap{
+			font-family: Pretendard;
+			width: 500px;
+			height: 500px;		
+			margin: 30px auto 0; 
+			border: 1px solid #ccc;
+			border-radius: 20px;
+			background-color: #eee;
+		}
+
+		/* 헤더 */
+		header{
+			position: relative;
+			margin-top: 30px;
+		}
+		header>#winner{
+			height: 60px;
+			display: block;
+			text-align: center;
+			font-size: 30px;
+		}
+		header>#score {
+			position: absolute;
+			left: 200px;
+			top: 170px;
+			width: 100px;
+			height: 50px;
+			line-height: 50px;
+			display: block;
+			margin: 0 auto;
+			font-size: 20px;
+			text-align: center;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border-radius: 10px;
+		}
+
+		/* 섹션 */
+		section{
+			position: relative;
+			display: flex;
+			flex-flow: row nowrap;
+		}		
+		section>p{
+			position: absolute;
+			left: 50px;
+			text-align: center;
+		}
+		section>p:nth-of-type(2){
+			position: absolute;
+			left: 380px;
+		}
+
+		section>#computer {
+			position: absolute;
+			left: 20px;
+			top: 50px;
+			width: 150px;
+			height: 150px;
+			text-align: center;
+			background-image: url(./images/scissors_left.png);
+			background-size: cover;
+		}
+		section>#user{
+			position: absolute;
+			left: 320px;
+			top: 50px;
+			width: 150px;
+			height: 150px;
+			text-align: center;
+			background-image: url(./images/scissors.png);
+			background-size: cover;
+		}
+	
+		/* 푸터 */
+		footer{
+			position: relative;
+		}
+		footer>fieldset{
+			border: none;
+		}
+		footer>fieldset>input{
+			position: absolute;
+			left: 50px;
+			top: 250px;
+            width: 100px;
+            height: 40px;
+        }
+		footer>fieldset>input:nth-child(2){
+			left: 200px;
+			top: 250px;
+        }
+		footer>fieldset>input:nth-child(3){
+			left: 350px;
+			top: 250px;
+        }
+		footer>#btnRestart {
+			position: absolute;
+			width: 400px;
+			height: 70px;
+			line-height: 70px;
+			left: 50px;
+			top: 300px;
+			text-align: center;
+			margin: 0 auto;
+			font-size: 20px;
+			margin-top: 10px;			
+		}
+
+	</style>	
+</head>
+<body>
+	<div id="wrap">
+		<header>			
+			<span id="winner">가위 바위 보!</span>
+			<div id="score"></div>
+		</header>
+		
+		<section>
+			<p>컴퓨터</p><div id="computer"></div>
+			<p>당신</p><div id="user"></div>
+		</section>
+		
+		<footer>
+			<fieldset id="button" disabled="disabled">
+				<input type="button" onclick="userGame(0);" value="가위">
+				<input type="button" onclick="userGame(1)" value="바위">
+				<input type="button" onclick="userGame(2)" value="보">	
+			</fieldset>					
+			<input id="btnRestart" type="button" onclick="re();" value="시작">
+		</footer>
+	</div>
+
+
+    <script>	
+		let count = 0;
+		let win = 0;
+		let draw = 0;
+		let lose = 0;
+		
+		let user = document.getElementById('user');
+		let winner = document.getElementById('winner');
+		
+
+		function re(){
+			count = 0;
+			win = 0;
+			draw = 0;
+			lose = 0;
+			document.getElementById('winner').innerHTML = '가위 바위 보!'
+			document.getElementById('computer').style.backgroundImage = '';
+			document.getElementById('score').innerHTML = win+' : ' + lose;
+			document.getElementById('button').disabled = false;
+		}
+		
+		
+
+		function userGame(input){
+			if(count<=9){			
+							
+				count++;
+				let result = calc(input);
+
+				if(input==0){
+				 	user.style.backgroundImage = "url('./images/scissors.png')"
+					user.style.backgroundSize = "cover";
+				}else if(input==1){
+					user.style.backgroundImage = "url('./images/rock.png')"
+					user.style.backgroundSize = "cover";
+				}else{
+					user.style.backgroundImage = "url('./images/paper.png')"
+					user.style.backgroundSize = "cover";
+				}
+				if(result == 'win') {
+					win++;
+				}
+				else if(result == 'draw') {
+					draw++;		
+				}
+				else{
+					lose++;
+				}				
+				document.getElementById('score').innerHTML = lose+' : ' +win;
+				document.getElementById('winner').innerHTML = count+'판째';
+			}			
+			if(count==10){
+				if(win>lose){
+					winner.innerHTML = '당신이 이겼습니다!';
+				}else if(win==lose){
+					winner.innerHTML = '컴퓨터와 비겼습니다';
+				}else{
+					winner.innerHTML = '당신이 졌습니다ㅠㅠ';
+				}				
+			}	
+			return false;
+		}
+		
+		function calc(input) {
+			let comGame = Math.floor(Math.random()*3);
+			const img = document.getElementById("computer");			
+			if(comGame == 0) {	
+				img.style.backgroundImage = "url('./images/scissors_left.png')"
+				img.style.backgroundSize = "cover";
+			}
+			else if(comGame == 1) {
+				img.style.backgroundImage = "url('./images/rock_left.png')"
+				img.style.backgroundSize = "cover";
+			}
+			else{
+				img.style.backgroundImage = "url('./images/paper_left.png')"
+				img.style.backgroundSize = "cover";
+			}
+			
+			var result = input - comGame;
+			if(result == 0){
+				return 'draw';
+			}
+			else if(result == 1 || result == -2) {
+				return 'win';
+			}
+			else{
+				return 'lose';
+			}
+		}
+		
+		
+		
+		
+	</script>
+</body>
+</html>
